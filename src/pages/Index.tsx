@@ -116,6 +116,63 @@ const Index = () => {
             </Card>
           ))}
         </div>
+
+        {/* About Us Section */}
+        <section className="mt-16 py-12 bg-[hsl(var(--study-light))] rounded-2xl animate-fade-in" style={{ animationDelay: '400ms' }}>
+          <div className="max-w-4xl mx-auto px-4">
+            <h2 className="text-3xl sm:text-4xl font-bold text-center mb-6 text-[hsl(var(--study))]">
+              About Topper Guide
+            </h2>
+            <p className="text-base sm:text-lg text-center text-muted-foreground leading-relaxed mb-8">
+              Topper Guide is your comprehensive platform for academic excellence. We provide carefully curated study materials, 
+              Multiple Choice Questions, Long Answer Notes, and Important HOTS Questions for Classes 7-12. Our mission is to 
+              empower students with the best resources to achieve their academic goals and excel in their studies.
+            </p>
+            
+            {/* Quotes Section */}
+            <div className="mt-12">
+              <h3 className="text-2xl font-bold text-center mb-8 text-[hsl(var(--study))]">
+                Words of Wisdom
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <article className="bg-background p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 hover-scale border-l-4 border-[hsl(var(--study))]">
+                  <blockquote className="text-foreground italic mb-3">
+                    "Education is the most powerful weapon which you can use to change the world."
+                  </blockquote>
+                  <cite className="text-sm text-[hsl(var(--study))] font-semibold not-italic">— Nelson Mandela</cite>
+                </article>
+                
+                <article className="bg-background p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 hover-scale border-l-4 border-[hsl(var(--study))]">
+                  <blockquote className="text-foreground italic mb-3">
+                    "The beautiful thing about learning is that no one can take it away from you."
+                  </blockquote>
+                  <cite className="text-sm text-[hsl(var(--study))] font-semibold not-italic">— B.B. King</cite>
+                </article>
+                
+                <article className="bg-background p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 hover-scale border-l-4 border-[hsl(var(--study))]">
+                  <blockquote className="text-foreground italic mb-3">
+                    "Education is not preparation for life; education is life itself."
+                  </blockquote>
+                  <cite className="text-sm text-[hsl(var(--study))] font-semibold not-italic">— John Dewey</cite>
+                </article>
+                
+                <article className="bg-background p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 hover-scale border-l-4 border-[hsl(var(--study))]">
+                  <blockquote className="text-foreground italic mb-3">
+                    "The only person who is educated is the one who has learned how to learn and change."
+                  </blockquote>
+                  <cite className="text-sm text-[hsl(var(--study))] font-semibold not-italic">— Carl Rogers</cite>
+                </article>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Footer */}
+        <footer className="mt-12 py-8 text-center border-t">
+          <p className="text-sm text-muted-foreground">
+            © {new Date().getFullYear()} Topper Guide. Empowering students to achieve excellence.
+          </p>
+        </footer>
       </main>
     </div>
   );

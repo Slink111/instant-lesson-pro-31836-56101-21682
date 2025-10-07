@@ -29,6 +29,10 @@ All colors MUST be HSL.
     --accent: 32 95% 58%;
     --accent-foreground: 0 0% 100%;
 
+    --study: 142 76% 36%;
+    --study-foreground: 0 0% 100%;
+    --study-light: 142 52% 96%;
+
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 100%;
 
@@ -76,6 +80,10 @@ All colors MUST be HSL.
 
     --accent: 32 95% 58%;
     --accent-foreground: 0 0% 100%;
+
+    --study: 142 76% 45%;
+    --study-foreground: 0 0% 100%;
+    --study-light: 142 52% 15%;
 
     --destructive: 0 62.8% 50%;
     --destructive-foreground: 0 0% 100%;
