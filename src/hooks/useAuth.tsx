@@ -1,56 +1,48 @@
 import { createContext, useContext, useEffect, useState } from 'react';
-import { User, Session } from '@supabase/supabase-js';
-import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
 
 interface AuthContextType {
-  user: User | null;
-  session: Session | null;
+  nickname: string | null;
   isAdmin: boolean;
   loading: boolean;
-  signIn: (email: string, password: string) => Promise<{ error: any }>;
-  signUp: (email: string, password: string) => Promise<{ error: any }>;
-  signOut: () => Promise<void>;
+  setNickname: (nickname: string) => void;
+  clearNickname: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+const ADMIN_NICKNAME = 'tojodeepmaker111';
+
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
+  const [nickname, setNicknameState] = useState<string | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Backend disabled - no authentication
+    const stored = localStorage.getItem('nickname');
+    if (stored) {
+      setNicknameState(stored);
+      setIsAdmin(stored === ADMIN_NICKNAME);
+    }
     setLoading(false);
   }, []);
 
-  const checkAdminStatus = async (userId: string) => {
-    // Backend disabled
+  const setNickname = (newNickname: string) => {
+    localStorage.setItem('nickname', newNickname);
+    setNicknameState(newNickname);
+    setIsAdmin(newNickname === ADMIN_NICKNAME);
+  };
+
+  const clearNickname = () => {
+    localStorage.removeItem('nickname');
+    setNicknameState(null);
     setIsAdmin(false);
-    setLoading(false);
-  };
-
-  const signIn = async (email: string, password: string) => {
-    // Backend disabled
-    return { error: { message: 'Authentication is currently disabled' } };
-  };
-
-  const signUp = async (email: string, password: string) => {
-    // Backend disabled
-    return { error: { message: 'Authentication is currently disabled' } };
-  };
-
-  const signOut = async () => {
-    // Backend disabled
-    setIsAdmin(false);
-    navigate('/');
+    navigate('/auth');
   };
 
   return (
-    <AuthContext.Provider value={{ user, session, isAdmin, loading, signIn, signUp, signOut }}>
+    <AuthContext.Provider value={{ nickname, isAdmin, loading, setNickname, clearNickname }}>
       {children}
     </AuthContext.Provider>
   );

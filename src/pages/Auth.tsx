@@ -9,109 +9,73 @@ import { useToast } from '@/hooks/use-toast';
 import { GraduationCap } from 'lucide-react';
 
 const Auth = () => {
-  const [isLogin, setIsLogin] = useState(true);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false);
-  const { signIn, signUp, user } = useAuth();
+  const [nicknameInput, setNicknameInput] = useState('');
+  const { nickname, setNickname } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
 
   useEffect(() => {
-    if (user) {
+    if (nickname) {
       navigate('/');
     }
-  }, [user, navigate]);
+  }, [nickname, navigate]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-
-    try {
-      const { error } = isLogin
-        ? await signIn(email, password)
-        : await signUp(email, password);
-
-      if (error) {
-        toast({
-          title: 'Error',
-          description: error.message,
-          variant: 'destructive',
-        });
-      } else {
-        toast({
-          title: isLogin ? 'Welcome back!' : 'Account created!',
-          description: isLogin ? 'You have successfully signed in.' : 'Please check your email to verify your account.',
-        });
-        if (isLogin) {
-          navigate('/');
-        }
-      }
-    } catch (error) {
+    
+    if (!nicknameInput.trim()) {
       toast({
         title: 'Error',
-        description: 'An unexpected error occurred.',
+        description: 'Please enter a nickname',
         variant: 'destructive',
       });
-    } finally {
-      setLoading(false);
+      return;
     }
+
+    setNickname(nicknameInput.trim());
+    toast({
+      title: 'Welcome!',
+      description: `Hello, ${nicknameInput.trim()}!`,
+    });
+    navigate('/');
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/5 via-secondary/5 to-accent/5 p-4">
-      <Card className="w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/5 via-secondary/5 to-accent/5 p-4 animate-fade-in">
+      <Card className="w-full max-w-md animate-scale-in">
         <CardHeader className="space-y-4 text-center">
           <div className="flex justify-center">
-            <div className="p-3 rounded-full bg-primary/10">
-              <GraduationCap className="w-8 h-8 text-primary" />
+            <div className="p-3 rounded-full bg-gradient-to-br from-primary to-secondary animate-pulse">
+              <GraduationCap className="w-8 h-8 text-primary-foreground" />
             </div>
           </div>
           <div>
-            <CardTitle className="text-2xl">Topper Guide</CardTitle>
+            <CardTitle className="text-2xl bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+              Topper Guide
+            </CardTitle>
             <CardDescription>
-              {isLogin ? 'Sign in to your account' : 'Create a new account'}
+              Enter your nickname to continue
             </CardDescription>
           </div>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="nickname">Nickname</Label>
               <Input
-                id="email"
-                type="email"
-                placeholder="you@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                id="nickname"
+                type="text"
+                placeholder="Enter your nickname"
+                value={nicknameInput}
+                onChange={(e) => setNicknameInput(e.target.value)}
                 required
+                className="transition-all duration-300 focus:scale-105"
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                minLength={6}
-              />
-            </div>
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? 'Loading...' : isLogin ? 'Sign In' : 'Sign Up'}
+            <Button type="submit" className="w-full hover-scale">
+              Continue
             </Button>
           </form>
-          <div className="mt-4 text-center text-sm">
-            <button
-              type="button"
-              onClick={() => setIsLogin(!isLogin)}
-              className="text-primary hover:underline"
-            >
-              {isLogin ? "Don't have an account? Sign up" : 'Already have an account? Sign in'}
-            </button>
-          </div>
         </CardContent>
       </Card>
     </div>

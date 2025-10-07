@@ -26,10 +26,21 @@ const Browse = () => {
     fetchChapters();
   }, [board, subject, classNum]);
 
-  const fetchChapters = async () => {
+  const fetchChapters = () => {
     setLoading(true);
-    // Backend disabled - no chapters available
-    setChapters([]);
+    const stored = localStorage.getItem('chapters');
+    if (stored) {
+      const allChapters = JSON.parse(stored);
+      const filtered = allChapters.filter(
+        (c: Chapter) =>
+          c.board === board &&
+          c.subject === subject &&
+          c.class_number === Number(classNum)
+      );
+      setChapters(filtered);
+    } else {
+      setChapters([]);
+    }
     setLoading(false);
   };
 
@@ -40,12 +51,12 @@ const Browse = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5">
+    <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 animate-fade-in">
       <div className="container mx-auto px-4 py-8">
         <Button
           onClick={() => navigate('/')}
           variant="ghost"
-          className="mb-6"
+          className="mb-6 hover-scale"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
           Back to Home
@@ -77,7 +88,11 @@ const Browse = () => {
         ) : (
           <div className="grid gap-6 max-w-4xl mx-auto">
             {chapters.map((chapter, index) => (
-              <Card key={chapter.id} className="hover:shadow-lg transition-shadow">
+              <Card 
+                key={chapter.id} 
+                className="hover:shadow-lg transition-all duration-300 animate-fade-in hover-scale"
+                style={{ animationDelay: `${index * 100}ms` }}
+              >
                 <CardHeader>
                   <CardTitle className="flex items-center gap-3">
                     <span className="text-2xl font-bold text-primary">
@@ -96,7 +111,7 @@ const Browse = () => {
                         key={type}
                         variant="outline"
                         onClick={() => navigate(`/content/${chapter.id}/${type}`)}
-                        className="flex-1 min-w-[140px]"
+                        className="flex-1 min-w-[140px] hover-scale"
                       >
                         <Icon className="w-4 h-4 mr-2" />
                         {label}

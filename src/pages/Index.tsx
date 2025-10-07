@@ -17,7 +17,7 @@ const classes = [7, 8, 9, 10, 11, 12];
 
 const Index = () => {
   const [selectedBoard, setSelectedBoard] = useState<'CBSE' | 'ICSE'>('CBSE');
-  const { user, isAdmin, signOut } = useAuth();
+  const { nickname, isAdmin, clearNickname } = useAuth();
   const navigate = useNavigate();
 
   const handleSubjectClick = (subject: string, classNum: number) => {
@@ -28,19 +28,19 @@ const Index = () => {
     <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5">
       {/* Header */}
       <header className="sticky top-0 z-50 backdrop-blur-lg bg-background/80 border-b">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+        <div className="container mx-auto px-4 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-gradient-to-br from-primary to-secondary">
+            <div className="p-2 rounded-lg bg-gradient-to-br from-primary to-secondary animate-pulse">
               <GraduationCap className="w-6 h-6 text-primary-foreground" />
             </div>
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+            <h1 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
               Topper Guide
             </h1>
           </div>
           
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3 sm:gap-4 w-full sm:w-auto justify-center">
             <Select value={selectedBoard} onValueChange={(v) => setSelectedBoard(v as 'CBSE' | 'ICSE')}>
-              <SelectTrigger className="w-32">
+              <SelectTrigger className="w-28 sm:w-32">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -49,20 +49,21 @@ const Index = () => {
               </SelectContent>
             </Select>
 
-            {user ? (
+            {nickname ? (
               <>
+                <span className="text-xs sm:text-sm text-muted-foreground hidden sm:inline">Hi, {nickname}!</span>
                 {isAdmin && (
-                  <Button onClick={() => navigate('/admin')} variant="outline">
-                    Admin Panel
+                  <Button onClick={() => navigate('/admin')} variant="outline" className="hover-scale text-xs sm:text-sm">
+                    Admin
                   </Button>
                 )}
-                <Button onClick={() => signOut()} variant="ghost" size="icon">
+                <Button onClick={() => clearNickname()} variant="ghost" size="icon" className="hover-scale">
                   <LogOut className="w-4 h-4" />
                 </Button>
               </>
             ) : (
-              <Button onClick={() => navigate('/auth')} variant="outline">
-                Sign In
+              <Button onClick={() => navigate('/auth')} variant="outline" className="hover-scale text-xs sm:text-sm">
+                Set Nickname
               </Button>
             )}
           </div>
@@ -70,20 +71,24 @@ const Index = () => {
       </header>
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-12">
-        <div className="text-center mb-12 space-y-4">
-          <h2 className="text-4xl font-bold">
+      <main className="container mx-auto px-4 py-8 sm:py-12">
+        <div className="text-center mb-8 sm:mb-12 space-y-4 animate-fade-in">
+          <h2 className="text-3xl sm:text-4xl font-bold">
             Master Your Studies with <span className="text-primary">Expert Resources</span>
           </h2>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto px-4">
             Access comprehensive study materials for Classes 7-12 including MCQs, Long Answer Notes, and Important HOTS Questions
           </p>
         </div>
 
         {/* Subjects Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
-          {subjects.map((subject) => (
-            <Card key={subject.name} className="group hover:shadow-xl transition-all duration-300 overflow-hidden">
+          {subjects.map((subject, index) => (
+            <Card 
+              key={subject.name} 
+              className="group hover:shadow-xl transition-all duration-300 overflow-hidden animate-fade-in hover-scale"
+              style={{ animationDelay: `${index * 100}ms` }}
+            >
               <CardHeader className={`bg-gradient-to-br ${subject.color} text-white`}>
                 <div className="flex items-center gap-3">
                   <subject.icon className="w-8 h-8" />
@@ -96,15 +101,15 @@ const Index = () => {
               <CardContent className="p-4">
                 <div className="grid grid-cols-3 gap-2">
                   {classes.map((classNum) => (
-                    <Button
-                      key={classNum}
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleSubjectClick(subject.name, classNum)}
-                      className="hover:bg-primary hover:text-primary-foreground transition-colors"
-                    >
-                      {classNum}
-                    </Button>
+                  <Button
+                    key={classNum}
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleSubjectClick(subject.name, classNum)}
+                    className="hover:bg-primary hover:text-primary-foreground transition-all duration-300 hover-scale"
+                  >
+                    {classNum}
+                  </Button>
                   ))}
                 </div>
               </CardContent>
