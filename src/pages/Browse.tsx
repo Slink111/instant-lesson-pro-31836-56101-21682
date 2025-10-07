@@ -26,20 +26,25 @@ const Browse = () => {
     fetchChapters();
   }, [board, subject, classNum]);
 
-  const fetchChapters = () => {
+  const fetchChapters = async () => {
     setLoading(true);
-    const stored = localStorage.getItem('chapters');
-    if (stored) {
-      const allChapters = JSON.parse(stored);
-      const filtered = allChapters.filter(
-        (c: Chapter) =>
-          c.board === board &&
-          c.subject === subject &&
-          c.class_number === Number(classNum)
-      );
-      setChapters(filtered);
-    } else {
+    const { data, error } = await supabase
+      .from('chapters')
+      .select('*')
+      .eq('board', board)
+      .eq('subject', subject)
+      .eq('class_number', Number(classNum))
+      .order('created_at', { ascending: true });
+
+    if (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to load chapters',
+        variant: 'destructive',
+      });
       setChapters([]);
+    } else {
+      setChapters(data || []);
     }
     setLoading(false);
   };

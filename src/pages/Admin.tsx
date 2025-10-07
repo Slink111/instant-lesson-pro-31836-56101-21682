@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
+import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -43,19 +44,24 @@ const Admin = () => {
     loadChapters();
   }, []);
 
-  const loadChapters = () => {
-    const stored = localStorage.getItem('chapters');
-    if (stored) {
-      setChapters(JSON.parse(stored));
+  const loadChapters = async () => {
+    const { data, error } = await supabase
+      .from('chapters')
+      .select('*')
+      .order('created_at', { ascending: true });
+
+    if (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to load chapters',
+        variant: 'destructive',
+      });
+    } else {
+      setChapters(data || []);
     }
   };
 
-  const saveChapters = (updatedChapters: Chapter[]) => {
-    localStorage.setItem('chapters', JSON.stringify(updatedChapters));
-    setChapters(updatedChapters);
-  };
-
-  const handleCreateChapter = (e: React.FormEvent) => {
+  const handleCreateChapter = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!newChapterName.trim()) {
@@ -67,33 +73,51 @@ const Admin = () => {
       return;
     }
 
-    const newChapter: Chapter = {
-      id: Date.now().toString(),
-      name: newChapterName.trim(),
-      board: newChapterBoard,
-      subject: newChapterSubject,
-      class_number: Number(newChapterClass),
-    };
+    const { error } = await supabase
+      .from('chapters')
+      .insert({
+        name: newChapterName.trim(),
+        board: newChapterBoard,
+        subject: newChapterSubject,
+        class_number: Number(newChapterClass),
+      });
 
-    const updatedChapters = [...chapters, newChapter];
-    saveChapters(updatedChapters);
+    if (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to create chapter',
+        variant: 'destructive',
+      });
+    } else {
+      toast({
+        title: 'Success!',
+        description: 'Chapter created successfully',
+      });
 
-    toast({
-      title: 'Success!',
-      description: 'Chapter created successfully',
-    });
-
-    setNewChapterName('');
+      setNewChapterName('');
+      loadChapters();
+    }
   };
 
-  const handleDeleteChapter = (id: string) => {
-    const updatedChapters = chapters.filter(c => c.id !== id);
-    saveChapters(updatedChapters);
-    
-    toast({
-      title: 'Deleted',
-      description: 'Chapter removed successfully',
-    });
+  const handleDeleteChapter = async (id: string) => {
+    const { error } = await supabase
+      .from('chapters')
+      .delete()
+      .eq('id', id);
+
+    if (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to delete chapter',
+        variant: 'destructive',
+      });
+    } else {
+      toast({
+        title: 'Deleted',
+        description: 'Chapter removed successfully',
+      });
+      loadChapters();
+    }
   };
 
   const getFilteredChapters = () => {

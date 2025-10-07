@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft, FileText } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 interface Chapter {
   id: string;
@@ -15,6 +17,7 @@ interface Chapter {
 const Content = () => {
   const { chapterId, contentType } = useParams();
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [chapter, setChapter] = useState<Chapter | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -22,13 +25,23 @@ const Content = () => {
     fetchData();
   }, [chapterId, contentType]);
 
-  const fetchData = () => {
+  const fetchData = async () => {
     setLoading(true);
-    const stored = localStorage.getItem('chapters');
-    if (stored) {
-      const chapters = JSON.parse(stored);
-      const found = chapters.find((c: Chapter) => c.id === chapterId);
-      setChapter(found || null);
+    const { data, error } = await supabase
+      .from('chapters')
+      .select('*')
+      .eq('id', chapterId)
+      .maybeSingle();
+
+    if (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to load chapter',
+        variant: 'destructive',
+      });
+      setChapter(null);
+    } else {
+      setChapter(data);
     }
     setLoading(false);
   };
