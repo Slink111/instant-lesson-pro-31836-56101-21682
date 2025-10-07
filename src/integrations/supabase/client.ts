@@ -1,7 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 
-// Lovable Cloud automatically provides these values
-const supabaseUrl = 'https://your-project.supabase.co';
-const supabaseKey = 'your-anon-key';
+// Mock Supabase client - backend disabled
+const supabaseUrl = 'https://mock.supabase.co';
+const supabaseKey = 'mock-key';
 
 export const supabase = createClient(supabaseUrl, supabaseKey);
