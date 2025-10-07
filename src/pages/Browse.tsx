@@ -28,26 +28,9 @@ const Browse = () => {
 
   const fetchChapters = async () => {
     setLoading(true);
-    try {
-      const { data, error } = await supabase
-        .from('chapters')
-        .select('*')
-        .eq('board', board)
-        .eq('subject', subject)
-        .eq('class_number', Number(classNum))
-        .order('chapter_order');
-
-      if (error) throw error;
-      setChapters(data || []);
-    } catch (error: any) {
-      toast({
-        title: 'Error',
-        description: error.message,
-        variant: 'destructive',
-      });
-    } finally {
-      setLoading(false);
-    }
+    // Backend disabled - no chapters available
+    setChapters([]);
+    setLoading(false);
   };
 
   const contentTypes = [
