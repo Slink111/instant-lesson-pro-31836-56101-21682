@@ -8,7 +8,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, Plus, Trash2 } from 'lucide-react';
+import { ArrowLeft, Plus, Trash2, Upload, FileText } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 interface Chapter {
   id: string;
@@ -16,6 +17,16 @@ interface Chapter {
   board: string;
   subject: string;
   class_number: number;
+}
+
+interface ContentFile {
+  id: string;
+  chapter_id: string;
+  content_type: string;
+  file_name: string;
+  file_path: string;
+  file_size: number;
+  mime_type: string;
 }
 
 const Admin = () => {
@@ -28,6 +39,10 @@ const Admin = () => {
   const [newChapterSubject, setNewChapterSubject] = useState('Physics');
   const [newChapterClass, setNewChapterClass] = useState('7');
   const [chapters, setChapters] = useState<Chapter[]>([]);
+  const [selectedChapterId, setSelectedChapterId] = useState<string>('');
+  const [selectedContentType, setSelectedContentType] = useState<'MCQ' | 'Long Answer' | 'HOTS'>('MCQ');
+  const [uploading, setUploading] = useState(false);
+  const [contentFiles, setContentFiles] = useState<ContentFile[]>([]);
 
   useEffect(() => {
     if (!loading && !isAdmin) {
@@ -43,6 +58,12 @@ const Admin = () => {
   useEffect(() => {
     loadChapters();
   }, []);
+
+  useEffect(() => {
+    if (selectedChapterId) {
+      loadContentFiles();
+    }
+  }, [selectedChapterId]);
 
   const loadChapters = async () => {
     const { data, error } = await supabase
@@ -120,6 +141,101 @@ const Admin = () => {
     }
   };
 
+  const loadContentFiles = async () => {
+    if (!selectedChapterId) return;
+
+    const { data, error } = await supabase
+      .from('content_files')
+      .select('*')
+      .eq('chapter_id', selectedChapterId)
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to load content files',
+        variant: 'destructive',
+      });
+    } else {
+      setContentFiles(data || []);
+    }
+  };
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !selectedChapterId) return;
+
+    setUploading(true);
+    const filePath = `${selectedChapterId}/${selectedContentType}/${Date.now()}-${file.name}`;
+
+    try {
+      const { error: uploadError } = await supabase.storage
+        .from('content-files')
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      const { error: dbError } = await supabase
+        .from('content_files')
+        .insert({
+          chapter_id: selectedChapterId,
+          content_type: selectedContentType,
+          file_name: file.name,
+          file_path: filePath,
+          file_size: file.size,
+          mime_type: file.type,
+        });
+
+      if (dbError) throw dbError;
+
+      toast({
+        title: 'Success!',
+        description: 'File uploaded successfully',
+      });
+
+      loadContentFiles();
+    } catch (error: any) {
+      toast({
+        title: 'Upload failed',
+        description: error.message,
+        variant: 'destructive',
+      });
+    } finally {
+      setUploading(false);
+      e.target.value = '';
+    }
+  };
+
+  const handleDeleteFile = async (fileId: string, filePath: string) => {
+    try {
+      const { error: storageError } = await supabase.storage
+        .from('content-files')
+        .remove([filePath]);
+
+      if (storageError) throw storageError;
+
+      const { error: dbError } = await supabase
+        .from('content_files')
+        .delete()
+        .eq('id', fileId);
+
+      if (dbError) throw dbError;
+
+      toast({
+        title: 'Deleted',
+        description: 'File removed successfully',
+      });
+
+      loadContentFiles();
+    } catch (error: any) {
+      toast({
+        title: 'Delete failed',
+        description: error.message,
+        variant: 'destructive',
+      });
+    }
+  };
+
   const getFilteredChapters = () => {
     return chapters.filter(
       c => 
@@ -127,6 +243,12 @@ const Admin = () => {
         c.subject === newChapterSubject && 
         c.class_number === Number(newChapterClass)
     );
+  };
+
+  const formatFileSize = (bytes: number) => {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
   };
 
   if (loading) {
@@ -151,7 +273,13 @@ const Admin = () => {
           Admin Panel
         </h1>
 
-        <div className="grid gap-6 max-w-4xl mx-auto">
+        <Tabs defaultValue="chapters" className="max-w-4xl mx-auto">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="chapters">Manage Chapters</TabsTrigger>
+            <TabsTrigger value="files">Upload Files</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="chapters" className="space-y-6 mt-6">
           <Card className="animate-scale-in">
             <CardHeader>
               <CardTitle>Create New Chapter</CardTitle>
@@ -260,7 +388,112 @@ const Admin = () => {
               )}
             </CardContent>
           </Card>
-        </div>
+          </TabsContent>
+
+          <TabsContent value="files" className="space-y-6 mt-6">
+            <Card className="animate-scale-in">
+              <CardHeader>
+                <CardTitle>Upload Content Files</CardTitle>
+                <CardDescription>
+                  Upload study materials for chapters
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Select Chapter</Label>
+                    <Select value={selectedChapterId} onValueChange={setSelectedChapterId}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Choose a chapter" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {chapters.map((chapter) => (
+                          <SelectItem key={chapter.id} value={chapter.id}>
+                            {chapter.board} • {chapter.subject} • Class {chapter.class_number} • {chapter.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Content Type</Label>
+                    <Select value={selectedContentType} onValueChange={(v) => setSelectedContentType(v as any)}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="MCQ">MCQ</SelectItem>
+                        <SelectItem value="Long Answer">Long Answer</SelectItem>
+                        <SelectItem value="HOTS">HOTS</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="file-upload">Choose File</Label>
+                  <Input
+                    id="file-upload"
+                    type="file"
+                    onChange={handleFileUpload}
+                    disabled={!selectedChapterId || uploading}
+                    accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
+                  />
+                  <p className="text-sm text-muted-foreground">
+                    Supported formats: PDF, JPG, PNG, DOC, DOCX
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+
+            {selectedChapterId && (
+              <Card className="animate-scale-in" style={{ animationDelay: '100ms' }}>
+                <CardHeader>
+                  <CardTitle>Uploaded Files</CardTitle>
+                  <CardDescription>
+                    {chapters.find(c => c.id === selectedChapterId)?.name || 'Select a chapter'}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {contentFiles.length === 0 ? (
+                    <p className="text-center text-muted-foreground py-8">
+                      No files uploaded yet
+                    </p>
+                  ) : (
+                    <div className="space-y-2">
+                      {contentFiles.map((file, index) => (
+                        <div
+                          key={file.id}
+                          className="flex items-center justify-between p-3 rounded-lg border bg-card hover:bg-accent/5 transition-colors animate-fade-in"
+                          style={{ animationDelay: `${index * 50}ms` }}
+                        >
+                          <div className="flex items-center gap-3 flex-1 min-w-0">
+                            <FileText className="w-5 h-5 text-primary flex-shrink-0" />
+                            <div className="min-w-0 flex-1">
+                              <p className="font-medium truncate">{file.file_name}</p>
+                              <p className="text-sm text-muted-foreground">
+                                {file.content_type} • {formatFileSize(file.file_size)}
+                              </p>
+                            </div>
+                          </div>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleDeleteFile(file.id, file.file_path)}
+                            className="text-destructive hover:text-destructive hover:bg-destructive/10 flex-shrink-0"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            )}
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );
