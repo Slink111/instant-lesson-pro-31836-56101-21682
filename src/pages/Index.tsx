@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { GraduationCap, BookOpen, Beaker, Microscope, Monitor, LogOut } from 'lucide-react';
+import SmartSearch from '@/components/SmartSearch';
 
 const subjects = [
   { name: 'Physics', icon: Beaker, color: 'from-blue-500 to-indigo-600' },
@@ -72,13 +73,18 @@ const Index = () => {
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8 sm:py-12">
-        <div className="text-center mb-8 sm:mb-12 space-y-4 animate-fade-in">
+        <div className="text-center mb-8 sm:mb-12 space-y-6 animate-fade-in">
           <h2 className="text-3xl sm:text-4xl font-bold">
             Master Your Studies with <span className="text-primary">Expert Resources</span>
           </h2>
           <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto px-4">
             Access comprehensive study materials for Classes 7-12 including MCQs, Long Answer Notes, and Important HOTS Questions
           </p>
+          
+          {/* Smart Search Bar */}
+          <div className="px-4 mt-8">
+            <SmartSearch defaultBoard={selectedBoard} />
+          </div>
         </div>
 
         {/* Subjects Grid */}

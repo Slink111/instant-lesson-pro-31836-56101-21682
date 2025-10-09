@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -19,12 +19,27 @@ const Browse = () => {
   const { board, subject, classNum } = useParams();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [searchParams] = useSearchParams();
   const [chapters, setChapters] = useState<Chapter[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchChapters();
   }, [board, subject, classNum]);
+
+  useEffect(() => {
+    // Auto-navigate if content type is specified and we have chapters
+    const contentType = searchParams.get('type');
+    if (contentType && chapters.length > 0) {
+      // Navigate to first chapter with the specified content type
+      const normalizedType = contentType === 'mcq' ? 'MCQ' : 
+                            contentType === 'long-answer' ? 'Long Answer' : 
+                            contentType === 'hots' ? 'HOTS' : null;
+      if (normalizedType) {
+        navigate(`/content/${chapters[0].id}/${normalizedType}`);
+      }
+    }
+  }, [chapters, searchParams, navigate]);
 
   const fetchChapters = async () => {
     setLoading(true);
