@@ -6,9 +6,10 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, Plus, Trash2, Upload, FileText } from 'lucide-react';
+import { ArrowLeft, Plus, Trash2, Save, BookOpen } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 interface Chapter {
@@ -19,14 +20,12 @@ interface Chapter {
   class_number: number;
 }
 
-interface ContentFile {
+interface StudyMaterial {
   id: string;
   chapter_id: string;
-  content_type: string;
-  file_name: string;
-  file_path: string;
-  file_size: number;
-  mime_type: string;
+  content: string;
+  created_at: string;
+  updated_at: string;
 }
 
 const Admin = () => {
@@ -40,9 +39,9 @@ const Admin = () => {
   const [newChapterClass, setNewChapterClass] = useState('7');
   const [chapters, setChapters] = useState<Chapter[]>([]);
   const [selectedChapterId, setSelectedChapterId] = useState<string>('');
-  const [selectedContentType, setSelectedContentType] = useState<'MCQ' | 'Long Answer' | 'HOTS'>('MCQ');
-  const [uploading, setUploading] = useState(false);
-  const [contentFiles, setContentFiles] = useState<ContentFile[]>([]);
+  const [studyMaterialContent, setStudyMaterialContent] = useState('');
+  const [existingMaterial, setExistingMaterial] = useState<StudyMaterial | null>(null);
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     if (!loading && !isAdmin) {
@@ -61,7 +60,7 @@ const Admin = () => {
 
   useEffect(() => {
     if (selectedChapterId) {
-      loadContentFiles();
+      loadStudyMaterial();
     }
   }, [selectedChapterId]);
 
@@ -141,98 +140,100 @@ const Admin = () => {
     }
   };
 
-  const loadContentFiles = async () => {
+  const loadStudyMaterial = async () => {
     if (!selectedChapterId) return;
 
     const { data, error } = await supabase
-      .from('content_files')
+      .from('study_materials')
       .select('*')
       .eq('chapter_id', selectedChapterId)
-      .order('created_at', { ascending: false });
+      .maybeSingle();
 
     if (error) {
       toast({
         title: 'Error',
-        description: 'Failed to load content files',
+        description: 'Failed to load study material',
         variant: 'destructive',
       });
+      setExistingMaterial(null);
+      setStudyMaterialContent('');
     } else {
-      setContentFiles(data || []);
+      setExistingMaterial(data);
+      setStudyMaterialContent(data?.content || '');
     }
   };
 
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file || !selectedChapterId) return;
+  const handleSaveStudyMaterial = async () => {
+    if (!selectedChapterId || !studyMaterialContent.trim()) {
+      toast({
+        title: 'Error',
+        description: 'Please select a chapter and enter content',
+        variant: 'destructive',
+      });
+      return;
+    }
 
-    setUploading(true);
-    const filePath = `${selectedChapterId}/${selectedContentType}/${Date.now()}-${file.name}`;
+    setSaving(true);
 
     try {
-      const { error: uploadError } = await supabase.storage
-        .from('content-files')
-        .upload(filePath, file);
+      if (existingMaterial) {
+        // Update existing material
+        const { error } = await supabase
+          .from('study_materials')
+          .update({ content: studyMaterialContent.trim() })
+          .eq('id', existingMaterial.id);
 
-      if (uploadError) throw uploadError;
+        if (error) throw error;
+      } else {
+        // Create new material
+        const { error } = await supabase
+          .from('study_materials')
+          .insert({
+            chapter_id: selectedChapterId,
+            content: studyMaterialContent.trim(),
+          });
 
-      const { error: dbError } = await supabase
-        .from('content_files')
-        .insert({
-          chapter_id: selectedChapterId,
-          content_type: selectedContentType,
-          file_name: file.name,
-          file_path: filePath,
-          file_size: file.size,
-          mime_type: file.type,
-        });
-
-      if (dbError) throw dbError;
+        if (error) throw error;
+      }
 
       toast({
         title: 'Success!',
-        description: 'File uploaded successfully',
+        description: 'Study material saved successfully',
       });
 
-      loadContentFiles();
+      loadStudyMaterial();
     } catch (error: any) {
       toast({
-        title: 'Upload failed',
+        title: 'Save failed',
         description: error.message,
         variant: 'destructive',
       });
     } finally {
-      setUploading(false);
-      e.target.value = '';
+      setSaving(false);
     }
   };
 
-  const handleDeleteFile = async (fileId: string, filePath: string) => {
-    try {
-      const { error: storageError } = await supabase.storage
-        .from('content-files')
-        .remove([filePath]);
+  const handleDeleteStudyMaterial = async () => {
+    if (!existingMaterial) return;
 
-      if (storageError) throw storageError;
+    const { error } = await supabase
+      .from('study_materials')
+      .delete()
+      .eq('id', existingMaterial.id);
 
-      const { error: dbError } = await supabase
-        .from('content_files')
-        .delete()
-        .eq('id', fileId);
-
-      if (dbError) throw dbError;
-
+    if (error) {
       toast({
-        title: 'Deleted',
-        description: 'File removed successfully',
-      });
-
-      loadContentFiles();
-    } catch (error: any) {
-      toast({
-        title: 'Delete failed',
-        description: error.message,
+        title: 'Error',
+        description: 'Failed to delete study material',
         variant: 'destructive',
       });
+    } else {
+      toast({
+        title: 'Deleted',
+        description: 'Study material removed successfully',
+      });
+      setExistingMaterial(null);
+      setStudyMaterialContent('');
     }
   };
 
@@ -243,12 +244,6 @@ const Admin = () => {
         c.subject === newChapterSubject && 
         c.class_number === Number(newChapterClass)
     );
-  };
-
-  const formatFileSize = (bytes: number) => {
-    if (bytes < 1024) return bytes + ' B';
-    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
-    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
   };
 
   if (loading) {
@@ -276,7 +271,7 @@ const Admin = () => {
         <Tabs defaultValue="chapters" className="max-w-4xl mx-auto">
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="chapters">Manage Chapters</TabsTrigger>
-            <TabsTrigger value="files">Upload Files</TabsTrigger>
+            <TabsTrigger value="content">Write Study Material</TabsTrigger>
           </TabsList>
 
           <TabsContent value="chapters" className="space-y-6 mt-6">
@@ -390,108 +385,72 @@ const Admin = () => {
           </Card>
           </TabsContent>
 
-          <TabsContent value="files" className="space-y-6 mt-6">
+          <TabsContent value="content" className="space-y-6 mt-6">
             <Card className="animate-scale-in">
               <CardHeader>
-                <CardTitle>Upload Content Files</CardTitle>
+                <CardTitle>Write Study Material</CardTitle>
                 <CardDescription>
-                  Upload study materials for chapters
+                  Create or edit study material for chapters
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label>Select Chapter</Label>
-                    <Select value={selectedChapterId} onValueChange={setSelectedChapterId}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Choose a chapter" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {chapters.map((chapter) => (
-                          <SelectItem key={chapter.id} value={chapter.id}>
-                            {chapter.board} • {chapter.subject} • Class {chapter.class_number} • {chapter.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label>Content Type</Label>
-                    <Select value={selectedContentType} onValueChange={(v) => setSelectedContentType(v as any)}>
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="MCQ">MCQ</SelectItem>
-                        <SelectItem value="Long Answer">Long Answer</SelectItem>
-                        <SelectItem value="HOTS">HOTS</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-
                 <div className="space-y-2">
-                  <Label htmlFor="file-upload">Choose File</Label>
-                  <Input
-                    id="file-upload"
-                    type="file"
-                    onChange={handleFileUpload}
-                    disabled={!selectedChapterId || uploading}
-                    accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
-                  />
-                  <p className="text-sm text-muted-foreground">
-                    Supported formats: PDF, JPG, PNG, DOC, DOCX
-                  </p>
+                  <Label>Select Chapter</Label>
+                  <Select value={selectedChapterId} onValueChange={setSelectedChapterId}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Choose a chapter" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {chapters.map((chapter) => (
+                        <SelectItem key={chapter.id} value={chapter.id}>
+                          {chapter.board} • {chapter.subject} • Class {chapter.class_number} • {chapter.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
+
+                {selectedChapterId && (
+                  <>
+                    <div className="space-y-2">
+                      <Label htmlFor="study-content">Study Material Content</Label>
+                      <Textarea
+                        id="study-content"
+                        value={studyMaterialContent}
+                        onChange={(e) => setStudyMaterialContent(e.target.value)}
+                        placeholder="Write the study material here..."
+                        className="min-h-[400px] font-mono"
+                      />
+                      <p className="text-sm text-muted-foreground">
+                        Write your study material content. You can format it with line breaks and spacing.
+                      </p>
+                    </div>
+
+                    <div className="flex gap-3">
+                      <Button
+                        onClick={handleSaveStudyMaterial}
+                        disabled={saving || !studyMaterialContent.trim()}
+                        className="flex-1 hover-scale"
+                      >
+                        <Save className="w-4 h-4 mr-2" />
+                        {existingMaterial ? 'Update' : 'Save'} Study Material
+                      </Button>
+                      
+                      {existingMaterial && (
+                        <Button
+                          variant="destructive"
+                          onClick={handleDeleteStudyMaterial}
+                          className="hover-scale"
+                        >
+                          <Trash2 className="w-4 h-4 mr-2" />
+                          Delete
+                        </Button>
+                      )}
+                    </div>
+                  </>
+                )}
               </CardContent>
             </Card>
-
-            {selectedChapterId && (
-              <Card className="animate-scale-in" style={{ animationDelay: '100ms' }}>
-                <CardHeader>
-                  <CardTitle>Uploaded Files</CardTitle>
-                  <CardDescription>
-                    {chapters.find(c => c.id === selectedChapterId)?.name || 'Select a chapter'}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  {contentFiles.length === 0 ? (
-                    <p className="text-center text-muted-foreground py-8">
-                      No files uploaded yet
-                    </p>
-                  ) : (
-                    <div className="space-y-2">
-                      {contentFiles.map((file, index) => (
-                        <div
-                          key={file.id}
-                          className="flex items-center justify-between p-3 rounded-lg border bg-card hover:bg-accent/5 transition-colors animate-fade-in"
-                          style={{ animationDelay: `${index * 50}ms` }}
-                        >
-                          <div className="flex items-center gap-3 flex-1 min-w-0">
-                            <FileText className="w-5 h-5 text-primary flex-shrink-0" />
-                            <div className="min-w-0 flex-1">
-                              <p className="font-medium truncate">{file.file_name}</p>
-                              <p className="text-sm text-muted-foreground">
-                                {file.content_type} • {formatFileSize(file.file_size)}
-                              </p>
-                            </div>
-                          </div>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleDeleteFile(file.id, file.file_path)}
-                            className="text-destructive hover:text-destructive hover:bg-destructive/10 flex-shrink-0"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            )}
           </TabsContent>
         </Tabs>
       </div>

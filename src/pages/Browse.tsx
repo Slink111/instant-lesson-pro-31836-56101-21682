@@ -4,7 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, FileText, BookOpen, HelpCircle } from 'lucide-react';
+import { ArrowLeft, BookOpen } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface Chapter {
@@ -27,19 +27,6 @@ const Browse = () => {
     fetchChapters();
   }, [board, subject, classNum]);
 
-  useEffect(() => {
-    // Auto-navigate if content type is specified and we have chapters
-    const contentType = searchParams.get('type');
-    if (contentType && chapters.length > 0) {
-      // Navigate to first chapter with the specified content type
-      const normalizedType = contentType === 'mcq' ? 'MCQ' : 
-                            contentType === 'long-answer' ? 'Long Answer' : 
-                            contentType === 'hots' ? 'HOTS' : null;
-      if (normalizedType) {
-        navigate(`/content/${chapters[0].id}/${normalizedType}`);
-      }
-    }
-  }, [chapters, searchParams, navigate]);
 
   const fetchChapters = async () => {
     setLoading(true);
@@ -64,11 +51,6 @@ const Browse = () => {
     setLoading(false);
   };
 
-  const contentTypes = [
-    { type: 'MCQ', icon: HelpCircle, label: 'MCQs', color: 'bg-blue-100 text-blue-700' },
-    { type: 'Long Answer', icon: BookOpen, label: 'Long Answer', color: 'bg-green-100 text-green-700' },
-    { type: 'HOTS', icon: FileText, label: 'HOTS Questions', color: 'bg-purple-100 text-purple-700' },
-  ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 animate-fade-in">
@@ -125,19 +107,14 @@ const Browse = () => {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="flex flex-wrap gap-3">
-                    {contentTypes.map(({ type, icon: Icon, label, color }) => (
-                      <Button
-                        key={type}
-                        variant="outline"
-                        onClick={() => navigate(`/content/${chapter.id}/${type}`)}
-                        className="flex-1 min-w-[140px] hover-scale"
-                      >
-                        <Icon className="w-4 h-4 mr-2" />
-                        {label}
-                      </Button>
-                    ))}
-                  </div>
+                  <Button
+                    variant="outline"
+                    onClick={() => navigate(`/content/${chapter.id}`)}
+                    className="w-full hover-scale"
+                  >
+                    <BookOpen className="w-4 h-4 mr-2" />
+                    View Study Material
+                  </Button>
                 </CardContent>
               </Card>
             ))}

@@ -82,6 +82,38 @@ export type Database = {
           },
         ]
       }
+      study_materials: {
+        Row: {
+          chapter_id: string
+          content: string
+          created_at: string
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          chapter_id: string
+          content: string
+          created_at?: string
+          id?: string
+          updated_at?: string
+        }
+        Update: {
+          chapter_id?: string
+          content?: string
+          created_at?: string
+          id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "study_materials_chapter_id_fkey"
+            columns: ["chapter_id"]
+            isOneToOne: false
+            referencedRelation: "chapters"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never

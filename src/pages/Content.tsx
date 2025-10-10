@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, FileText, Download } from 'lucide-react';
+import { ArrowLeft, BookOpen } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface Chapter {
@@ -14,25 +14,24 @@ interface Chapter {
   class_number: number;
 }
 
-interface ContentFile {
+interface StudyMaterial {
   id: string;
-  file_name: string;
-  file_path: string;
-  file_size: number;
-  mime_type: string;
+  content: string;
+  created_at: string;
+  updated_at: string;
 }
 
 const Content = () => {
-  const { chapterId, contentType } = useParams();
+  const { chapterId } = useParams();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [chapter, setChapter] = useState<Chapter | null>(null);
-  const [files, setFiles] = useState<ContentFile[]>([]);
+  const [studyMaterial, setStudyMaterial] = useState<StudyMaterial | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchData();
-  }, [chapterId, contentType]);
+  }, [chapterId]);
 
   const fetchData = async () => {
     setLoading(true);
@@ -54,75 +53,24 @@ const Content = () => {
       setChapter(chapterData);
     }
 
-    const { data: filesData, error: filesError } = await supabase
-      .from('content_files')
+    const { data: materialData, error: materialError } = await supabase
+      .from('study_materials')
       .select('*')
       .eq('chapter_id', chapterId)
-      .eq('content_type', contentType)
-      .order('created_at', { ascending: false });
+      .maybeSingle();
 
-    if (filesError) {
+    if (materialError) {
       toast({
         title: 'Error',
-        description: 'Failed to load files',
+        description: 'Failed to load study material',
         variant: 'destructive',
       });
-      setFiles([]);
+      setStudyMaterial(null);
     } else {
-      setFiles(filesData || []);
+      setStudyMaterial(materialData);
     }
     
     setLoading(false);
-  };
-
-  const getFileUrl = (filePath: string) => {
-    const { data } = supabase.storage
-      .from('content-files')
-      .getPublicUrl(filePath);
-    return data.publicUrl;
-  };
-
-  const renderFile = (file: ContentFile) => {
-    const fileUrl = getFileUrl(file.file_path);
-
-    if (file.mime_type === 'application/pdf') {
-      return (
-        <div className="w-full h-[600px] md:h-[800px] rounded-lg overflow-hidden border">
-          <iframe
-            src={fileUrl}
-            className="w-full h-full"
-            title={file.file_name}
-          />
-        </div>
-      );
-    }
-
-    if (file.mime_type.startsWith('image/')) {
-      return (
-        <div className="w-full rounded-lg overflow-hidden border">
-          <img
-            src={fileUrl}
-            alt={file.file_name}
-            className="w-full h-auto"
-          />
-        </div>
-      );
-    }
-
-    return (
-      <Card>
-        <CardContent className="py-8 text-center">
-          <FileText className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
-          <p className="font-medium mb-2">{file.file_name}</p>
-          <Button asChild variant="outline">
-            <a href={fileUrl} download={file.file_name}>
-              <Download className="w-4 h-4 mr-2" />
-              Download File
-            </a>
-          </Button>
-        </CardContent>
-      </Card>
-    );
   };
 
   if (loading) {
@@ -149,17 +97,17 @@ const Content = () => {
           <div className="mb-8 animate-fade-in">
             <h1 className="text-2xl md:text-3xl font-bold mb-2">{chapter.name}</h1>
             <p className="text-muted-foreground">
-              {chapter.board} • {chapter.subject} • Class {chapter.class_number} • {contentType}
+              {chapter.board} • {chapter.subject} • Class {chapter.class_number}
             </p>
           </div>
         )}
 
-        {files.length === 0 ? (
+        {!studyMaterial ? (
           <Card className="animate-scale-in">
             <CardContent className="py-12 text-center">
-              <FileText className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
+              <BookOpen className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
               <p className="text-muted-foreground">
-                No files available yet
+                No study material available yet
               </p>
               <p className="text-sm text-muted-foreground mt-2">
                 Check back later for study materials.
@@ -167,24 +115,16 @@ const Content = () => {
             </CardContent>
           </Card>
         ) : (
-          <div className="space-y-6">
-            {files.map((file, index) => (
-              <div
-                key={file.id}
-                className="animate-fade-in"
-                style={{ animationDelay: `${index * 100}ms` }}
-              >
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-lg">{file.file_name}</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    {renderFile(file)}
-                  </CardContent>
-                </Card>
+          <Card className="animate-fade-in">
+            <CardHeader>
+              <CardTitle>Study Material</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="prose prose-sm md:prose-base max-w-none dark:prose-invert">
+                <div className="whitespace-pre-wrap">{studyMaterial.content}</div>
               </div>
-            ))}
-          </div>
+            </CardContent>
+          </Card>
         )}
       </div>
     </div>
