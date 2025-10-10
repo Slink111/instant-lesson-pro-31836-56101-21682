@@ -69,7 +69,6 @@ const Auth = () => {
                 value={nicknameInput}
                 onChange={(e) => setNicknameInput(e.target.value)}
                 required
-                className="transition-all duration-300 focus:scale-105"
               />
             </div>
             <Button type="submit" className="w-full hover-scale">
