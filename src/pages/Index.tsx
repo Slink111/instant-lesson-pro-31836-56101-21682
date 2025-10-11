@@ -73,22 +73,22 @@ const Index = () => {
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8 sm:py-12">
-        <div className="text-center mb-8 sm:mb-12 space-y-6 animate-fade-in">
-          <h2 className="text-3xl sm:text-4xl font-bold">
-            Master Your Studies with <span className="text-primary">Expert Resources</span>
-          </h2>
+        <section className="text-center mb-8 sm:mb-12 space-y-6 animate-fade-in">
+          <h1 className="text-3xl sm:text-4xl font-bold">
+            Free CBSE & ICSE Study Material for Class 10, 11, 12 - <span className="text-primary">MCQs, Notes & Solutions</span>
+          </h1>
           <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto px-4">
-            Access comprehensive study materials for Classes 7-12 including MCQs, Long Answer Notes, and Important HOTS Questions
+            Access comprehensive CBSE and ICSE study materials, chapter-wise MCQs with answers, short and long questions, NCERT solutions, and revision notes for Physics, Chemistry, Biology, and Computer Science - Classes 7-12. Free PDF downloads for board exam preparation 2025.
           </p>
           
           {/* Smart Search Bar */}
           <div className="px-4 mt-8">
             <SmartSearch defaultBoard={selectedBoard} />
           </div>
-        </div>
+        </section>
 
         {/* Subjects Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
+        <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto" aria-label="Study materials by subject">
           {subjects.map((subject, index) => (
             <Card 
               key={subject.name} 
@@ -121,24 +121,27 @@ const Index = () => {
               </CardContent>
             </Card>
           ))}
-        </div>
+        </section>
 
         {/* About Us Section */}
-        <section className="mt-16 py-12 bg-[hsl(var(--study-light))] rounded-2xl animate-fade-in" style={{ animationDelay: '400ms' }}>
+        <section className="mt-16 py-12 bg-[hsl(var(--study-light))] rounded-2xl animate-fade-in" style={{ animationDelay: '400ms' }} aria-label="About Topper Guide">
           <div className="max-w-4xl mx-auto px-4">
             <h2 className="text-3xl sm:text-4xl font-bold text-center mb-6 text-[hsl(var(--study))]">
-              About Topper Guide
+              Best Free Study Material for CBSE & ICSE Board Exam Preparation
             </h2>
             <p className="text-base sm:text-lg text-center text-muted-foreground leading-relaxed mb-8">
-              Topper Guide is your comprehensive platform for academic excellence. We provide carefully curated study materials, 
-              Multiple Choice Questions, Long Answer Notes, and Important HOTS Questions for Classes 7-12. Our mission is to 
-              empower students with the best resources to achieve their academic goals and excel in their studies.
+              Topper Guide offers free CBSE and ICSE study materials for classes 7 to 12. Download chapter-wise MCQs with answers PDF, 
+              NCERT solutions, short and long question answers, previous year question papers solved, important questions for board exams 2025, 
+              and comprehensive revision notes for Physics, Chemistry, Biology, and Computer Science. Our platform provides students with 
+              quality educational resources including class 10 study material chapter wise free download, class 11 important questions with answers, 
+              and class 12 board exam preparation materials. Master topics like light reflection and refraction MCQs, electricity numericals, 
+              periodic table questions, life processes notes, chemical reactions, heredity and evolution, python programming, and database concepts.
             </p>
             
             {/* Quotes Section */}
             <div className="mt-12">
               <h3 className="text-2xl font-bold text-center mb-8 text-[hsl(var(--study))]">
-                Words of Wisdom
+                Inspiration for Students
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <article className="bg-background p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 hover-scale border-l-4 border-[hsl(var(--study))]">

@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft, BookOpen } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { Helmet } from 'react-helmet-async';
 
 interface Chapter {
   id: string;
@@ -82,7 +83,14 @@ const Content = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 animate-fade-in">
+    <>
+      <Helmet>
+        <title>{chapter ? `${chapter.name} - ${chapter.board} Class ${chapter.class_number} ${chapter.subject} Study Material | Topper Guide` : 'Study Material | Topper Guide'}</title>
+        <meta name="description" content={`Free ${chapter?.board} Class ${chapter?.class_number} ${chapter?.subject} study material for ${chapter?.name}. Access comprehensive notes, MCQs with answers, short and long questions for board exam preparation 2025.`} />
+        <meta name="keywords" content={`${chapter?.board} class ${chapter?.class_number} ${chapter?.subject} ${chapter?.name}, ${chapter?.name} study material, ${chapter?.name} mcqs with answers, ${chapter?.name} notes pdf, ${chapter?.name} important questions`} />
+        <link rel="canonical" href={`https://topperguide.in/content/${chapterId}`} />
+      </Helmet>
+      <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 animate-fade-in">
       <div className="container mx-auto px-4 py-8">
         <Button
           onClick={() => navigate(-1)}
@@ -127,7 +135,8 @@ const Content = () => {
           </Card>
         )}
       </div>
-    </div>
+      </div>
+    </>
   );
 };
 

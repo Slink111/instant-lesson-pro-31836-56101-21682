@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, BookOpen } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { Helmet } from 'react-helmet-async';
 
 interface Chapter {
   id: string;
@@ -53,7 +54,14 @@ const Browse = () => {
 
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 animate-fade-in">
+    <>
+      <Helmet>
+        <title>{`${board} Class ${classNum} ${subject} Study Material - Chapter-wise Notes & MCQs | Topper Guide`}</title>
+        <meta name="description" content={`Free ${board} Class ${classNum} ${subject} study material with chapter-wise notes, MCQs with answers, short and long questions. Comprehensive ${subject} study notes for board exam preparation 2025.`} />
+        <meta name="keywords" content={`${board} class ${classNum} ${subject} study material, ${board} ${subject} class ${classNum} notes, ${subject} class ${classNum} mcqs with answers, ${subject} class ${classNum} important questions, ${board} class ${classNum} ${subject} chapter wise notes`} />
+        <link rel="canonical" href={`https://topperguide.in/browse/${board}/${subject}/${classNum}`} />
+      </Helmet>
+      <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 animate-fade-in">
       <div className="container mx-auto px-4 py-8">
         <Button
           onClick={() => navigate('/')}
@@ -121,7 +129,8 @@ const Browse = () => {
           </div>
         )}
       </div>
-    </div>
+      </div>
+    </>
   );
 };
 
