@@ -129,7 +129,24 @@ const Content = () => {
             </CardHeader>
             <CardContent>
               <div className="prose prose-sm md:prose-base max-w-none dark:prose-invert">
-                <div className="whitespace-pre-wrap">{studyMaterial.content}</div>
+                <div className="whitespace-pre-wrap">
+                  {studyMaterial.content.split(/(\!\[.*?\]\(.*?\))/).map((part, index) => {
+                    const imageMatch = part.match(/\!\[(.*?)\]\((.*?)\)/);
+                    if (imageMatch) {
+                      const [, alt, src] = imageMatch;
+                      return (
+                        <img
+                          key={index}
+                          src={src}
+                          alt={alt}
+                          className="my-4 rounded-lg max-w-full h-auto"
+                          loading="lazy"
+                        />
+                      );
+                    }
+                    return part;
+                  })}
+                </div>
               </div>
             </CardContent>
           </Card>

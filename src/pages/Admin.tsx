@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, Plus, Trash2, Save, BookOpen } from 'lucide-react';
+import { ArrowLeft, Plus, Trash2, Save, BookOpen, Image, Upload } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 interface Chapter {
@@ -42,6 +42,8 @@ const Admin = () => {
   const [studyMaterialContent, setStudyMaterialContent] = useState('');
   const [existingMaterial, setExistingMaterial] = useState<StudyMaterial | null>(null);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [imageAlt, setImageAlt] = useState('');
 
   useEffect(() => {
     if (!loading && !isAdmin) {
@@ -237,6 +239,69 @@ const Admin = () => {
     }
   };
 
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !selectedChapterId) return;
+
+    if (!file.type.startsWith('image/')) {
+      toast({
+        title: 'Error',
+        description: 'Please upload an image file',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    if (!imageAlt.trim()) {
+      toast({
+        title: 'Alt Text Required',
+        description: 'Please enter a description for the image',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    setUploading(true);
+
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${selectedChapterId}/${Date.now()}.${fileExt}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('content-files')
+        .upload(fileName, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('content-files')
+        .getPublicUrl(fileName);
+
+      const imageMarkdown = `\n![${imageAlt}](${publicUrl})\n`;
+      setStudyMaterialContent(prev => prev + imageMarkdown);
+      setImageAlt('');
+
+      toast({
+        title: 'Success!',
+        description: 'Image uploaded successfully',
+      });
+
+      e.target.value = '';
+    } catch (error: any) {
+      toast({
+        title: 'Upload failed',
+        description: error.message,
+        variant: 'destructive',
+      });
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const getWordCount = (text: string) => {
+    return text.trim().split(/\s+/).filter(word => word.length > 0).length;
+  };
+
   const getFilteredChapters = () => {
     return chapters.filter(
       c => 
@@ -412,8 +477,13 @@ const Admin = () => {
 
                 {selectedChapterId && (
                   <>
-                    <div className="space-y-2">
-                      <Label htmlFor="study-content">Study Material Content</Label>
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <Label htmlFor="study-content">Study Material Content</Label>
+                        <span className="text-sm text-muted-foreground">
+                          Word count: {getWordCount(studyMaterialContent)}
+                        </span>
+                      </div>
                       <Textarea
                         id="study-content"
                         value={studyMaterialContent}
@@ -423,7 +493,48 @@ const Admin = () => {
                       />
                       <p className="text-sm text-muted-foreground">
                         Write your study material content. You can format it with line breaks and spacing.
+                        Use ![alt text](image-url) format for images.
                       </p>
+                    </div>
+
+                    <div className="space-y-4 p-4 border rounded-lg bg-muted/20">
+                      <div className="flex items-center gap-2">
+                        <Image className="w-5 h-5 text-primary" />
+                        <Label className="text-base font-semibold">Add Image</Label>
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <Label htmlFor="image-alt">Image Description (Alt Text) *</Label>
+                        <Input
+                          id="image-alt"
+                          value={imageAlt}
+                          onChange={(e) => setImageAlt(e.target.value)}
+                          placeholder="e.g., Diagram showing light reflection"
+                          className="w-full"
+                        />
+                        <p className="text-xs text-muted-foreground">
+                          Describe what the image shows for accessibility and SEO
+                        </p>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="image-upload">Upload Image</Label>
+                        <Input
+                          id="image-upload"
+                          type="file"
+                          accept="image/*"
+                          onChange={handleImageUpload}
+                          disabled={uploading || !imageAlt.trim()}
+                          className="cursor-pointer"
+                        />
+                      </div>
+
+                      {uploading && (
+                        <p className="text-sm text-muted-foreground flex items-center gap-2">
+                          <Upload className="w-4 h-4 animate-pulse" />
+                          Uploading image...
+                        </p>
+                      )}
                     </div>
 
                     <div className="flex gap-3">
