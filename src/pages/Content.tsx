@@ -6,6 +6,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft, BookOpen } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Helmet } from 'react-helmet-async';
+import katex from 'katex';
+import 'katex/dist/katex.min.css';
 
 interface Chapter {
   id: string;
@@ -130,7 +132,8 @@ const Content = () => {
             <CardContent>
               <div className="prose prose-sm md:prose-base max-w-none dark:prose-invert">
                 <div className="whitespace-pre-wrap">
-                  {studyMaterial.content.split(/(\!\[.*?\]\(.*?\))/).map((part, index) => {
+                  {studyMaterial.content.split(/(\!\[.*?\]\(.*?\)|\$\$[\s\S]*?\$\$|\$.*?\$)/).map((part, index) => {
+                    // Handle images
                     const imageMatch = part.match(/\!\[(.*?)\]\((.*?)\)/);
                     if (imageMatch) {
                       const [, alt, src] = imageMatch;
@@ -144,6 +147,37 @@ const Content = () => {
                         />
                       );
                     }
+                    
+                    // Handle display math ($$...$$)
+                    const displayMathMatch = part.match(/^\$\$([\s\S]*?)\$\$$/);
+                    if (displayMathMatch) {
+                      try {
+                        const latex = displayMathMatch[1].trim();
+                        const html = katex.renderToString(latex, {
+                          displayMode: true,
+                          throwOnError: false,
+                        });
+                        return <div key={index} dangerouslySetInnerHTML={{ __html: html }} className="my-4" />;
+                      } catch (e) {
+                        return <span key={index} className="text-destructive">{part}</span>;
+                      }
+                    }
+                    
+                    // Handle inline math ($...$)
+                    const inlineMathMatch = part.match(/^\$(.*?)\$$/);
+                    if (inlineMathMatch) {
+                      try {
+                        const latex = inlineMathMatch[1];
+                        const html = katex.renderToString(latex, {
+                          displayMode: false,
+                          throwOnError: false,
+                        });
+                        return <span key={index} dangerouslySetInnerHTML={{ __html: html }} />;
+                      } catch (e) {
+                        return <span key={index} className="text-destructive">{part}</span>;
+                      }
+                    }
+                    
                     return part;
                   })}
                 </div>
