@@ -14,7 +14,7 @@ const subjects = [
   { name: 'Computer', icon: Monitor, color: 'from-purple-500 to-violet-600' },
 ];
 
-const classes = [7, 8, 9, 10, 11, 12];
+const classes = [7, 8, 9, 10];
 
 const Index = () => {
   const [selectedBoard, setSelectedBoard] = useState<'CBSE' | 'ICSE'>('CBSE');
@@ -75,10 +75,10 @@ const Index = () => {
       <main className="container mx-auto px-4 py-8 sm:py-12">
         <section className="text-center mb-8 sm:mb-12 space-y-6 animate-fade-in">
           <h1 className="text-3xl sm:text-4xl font-bold">
-            Free CBSE & ICSE Study Material for Class 10, 11, 12 - <span className="text-primary">MCQs, Notes & Solutions</span>
+            Free CBSE & ICSE Study Material for Class 7-10 - <span className="text-primary">MCQs, Notes & Solutions</span>
           </h1>
           <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto px-4">
-            Access comprehensive CBSE and ICSE study materials, chapter-wise MCQs with answers, short and long questions, NCERT solutions, and revision notes for Physics, Chemistry, Biology, and Computer Science - Classes 7-12. Free PDF downloads for board exam preparation 2025.
+            Access comprehensive CBSE and ICSE study materials, chapter-wise MCQs with answers, short and long questions, NCERT solutions, and revision notes for Physics, Chemistry, Biology, and Computer Science - Classes 7-10. Free PDF downloads for board exam preparation 2025.
           </p>
           
           {/* Smart Search Bar */}
@@ -101,20 +101,20 @@ const Index = () => {
                   <CardTitle className="text-xl">{subject.name}</CardTitle>
                 </div>
                 <CardDescription className="text-white/90">
-                  Classes 7-12
+                  Classes 7-10
                 </CardDescription>
               </CardHeader>
-              <CardContent className="p-4">
-                <div className="grid grid-cols-3 gap-2">
+              <CardContent className="p-6">
+                <div className="grid grid-cols-2 gap-3">
                   {classes.map((classNum) => (
                   <Button
                     key={classNum}
                     variant="outline"
-                    size="sm"
+                    size="lg"
                     onClick={() => handleSubjectClick(subject.name, classNum)}
-                    className="hover:bg-primary hover:text-primary-foreground transition-all duration-300 hover-scale"
+                    className="hover:bg-primary hover:text-primary-foreground transition-all duration-300 hover-scale font-semibold text-base"
                   >
-                    {classNum}
+                    Class {classNum}
                   </Button>
                   ))}
                 </div>
@@ -130,11 +130,11 @@ const Index = () => {
               Best Free Study Material for CBSE & ICSE Board Exam Preparation
             </h2>
             <p className="text-base sm:text-lg text-center text-muted-foreground leading-relaxed mb-8">
-              Topper Guide offers free CBSE and ICSE study materials for classes 7 to 12. Download chapter-wise MCQs with answers PDF, 
+              Topper Guide offers free CBSE and ICSE study materials for classes 7 to 10. Download chapter-wise MCQs with answers PDF, 
               NCERT solutions, short and long question answers, previous year question papers solved, important questions for board exams 2025, 
               and comprehensive revision notes for Physics, Chemistry, Biology, and Computer Science. Our platform provides students with 
-              quality educational resources including class 10 study material chapter wise free download, class 11 important questions with answers, 
-              and class 12 board exam preparation materials. Master topics like light reflection and refraction MCQs, electricity numericals, 
+              quality educational resources including class 10 study material chapter wise free download, class 9 important questions with answers, 
+              and class 8 board exam preparation materials. Master topics like light reflection and refraction MCQs, electricity numericals, 
               periodic table questions, life processes notes, chemical reactions, heredity and evolution, python programming, and database concepts.
             </p>
             
