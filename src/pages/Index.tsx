@@ -4,8 +4,16 @@ import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { GraduationCap, BookOpen, Beaker, Microscope, Monitor, LogOut } from 'lucide-react';
+import { GraduationCap, BookOpen, Beaker, Microscope, Monitor, LogOut, Home } from 'lucide-react';
 import SmartSearch from '@/components/SmartSearch';
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+} from "@/components/ui/navigation-menu";
 
 const subjects = [
   { name: 'Physics', icon: Beaker, color: 'from-blue-500 to-indigo-600' },
@@ -71,6 +79,142 @@ const Index = () => {
         </div>
       </header>
 
+      {/* Navigation Menu */}
+      <nav className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60" aria-label="Main navigation">
+        <div className="container mx-auto px-4">
+          <NavigationMenu className="mx-auto">
+            <NavigationMenuList className="flex-wrap justify-center">
+              <NavigationMenuItem>
+                <NavigationMenuLink 
+                  href="/"
+                  className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-accent/50 data-[state=open]:bg-accent/50"
+                >
+                  <Home className="w-4 h-4 mr-2" />
+                  Home
+                </NavigationMenuLink>
+              </NavigationMenuItem>
+
+              <NavigationMenuItem>
+                <NavigationMenuTrigger>Physics</NavigationMenuTrigger>
+                <NavigationMenuContent>
+                  <ul className="grid gap-3 p-4 w-[200px]">
+                    {classes.map((classNum) => (
+                      <li key={`physics-${classNum}`}>
+                        <NavigationMenuLink asChild>
+                          <a
+                            href={`/browse/${selectedBoard}/Physics/${classNum}`}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              handleSubjectClick('Physics', classNum);
+                            }}
+                            className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                          >
+                            <div className="text-sm font-medium leading-none">Class {classNum}</div>
+                            <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                              Physics study materials
+                            </p>
+                          </a>
+                        </NavigationMenuLink>
+                      </li>
+                    ))}
+                  </ul>
+                </NavigationMenuContent>
+              </NavigationMenuItem>
+
+              <NavigationMenuItem>
+                <NavigationMenuTrigger>Chemistry</NavigationMenuTrigger>
+                <NavigationMenuContent>
+                  <ul className="grid gap-3 p-4 w-[200px]">
+                    {classes.map((classNum) => (
+                      <li key={`chemistry-${classNum}`}>
+                        <NavigationMenuLink asChild>
+                          <a
+                            href={`/browse/${selectedBoard}/Chemistry/${classNum}`}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              handleSubjectClick('Chemistry', classNum);
+                            }}
+                            className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                          >
+                            <div className="text-sm font-medium leading-none">Class {classNum}</div>
+                            <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                              Chemistry study materials
+                            </p>
+                          </a>
+                        </NavigationMenuLink>
+                      </li>
+                    ))}
+                  </ul>
+                </NavigationMenuContent>
+              </NavigationMenuItem>
+
+              <NavigationMenuItem>
+                <NavigationMenuTrigger>Biology</NavigationMenuTrigger>
+                <NavigationMenuContent>
+                  <ul className="grid gap-3 p-4 w-[200px]">
+                    {classes.map((classNum) => (
+                      <li key={`biology-${classNum}`}>
+                        <NavigationMenuLink asChild>
+                          <a
+                            href={`/browse/${selectedBoard}/Biology/${classNum}`}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              handleSubjectClick('Biology', classNum);
+                            }}
+                            className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                          >
+                            <div className="text-sm font-medium leading-none">Class {classNum}</div>
+                            <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                              Biology study materials
+                            </p>
+                          </a>
+                        </NavigationMenuLink>
+                      </li>
+                    ))}
+                  </ul>
+                </NavigationMenuContent>
+              </NavigationMenuItem>
+
+              <NavigationMenuItem>
+                <NavigationMenuTrigger>Computer Science</NavigationMenuTrigger>
+                <NavigationMenuContent>
+                  <ul className="grid gap-3 p-4 w-[200px]">
+                    {classes.map((classNum) => (
+                      <li key={`computer-${classNum}`}>
+                        <NavigationMenuLink asChild>
+                          <a
+                            href={`/browse/${selectedBoard}/Computer/${classNum}`}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              handleSubjectClick('Computer', classNum);
+                            }}
+                            className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                          >
+                            <div className="text-sm font-medium leading-none">Class {classNum}</div>
+                            <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                              Computer study materials
+                            </p>
+                          </a>
+                        </NavigationMenuLink>
+                      </li>
+                    ))}
+                  </ul>
+                </NavigationMenuContent>
+              </NavigationMenuItem>
+
+              <NavigationMenuItem>
+                <NavigationMenuLink 
+                  href="#about"
+                  className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-accent/50 data-[state=open]:bg-accent/50"
+                >
+                  About
+                </NavigationMenuLink>
+              </NavigationMenuItem>
+            </NavigationMenuList>
+          </NavigationMenu>
+        </div>
+      </nav>
+
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8 sm:py-12">
         <section className="text-center mb-8 sm:mb-12 space-y-6 animate-fade-in">
@@ -124,7 +268,7 @@ const Index = () => {
         </section>
 
         {/* About Us Section */}
-        <section className="mt-16 py-12 bg-[hsl(var(--study-light))] rounded-2xl animate-fade-in" style={{ animationDelay: '400ms' }} aria-label="About Topper Guide">
+        <section id="about" className="mt-16 py-12 bg-[hsl(var(--study-light))] rounded-2xl animate-fade-in" style={{ animationDelay: '400ms' }} aria-label="About Topper Guide">
           <div className="max-w-4xl mx-auto px-4">
             <h2 className="text-3xl sm:text-4xl font-bold text-center mb-6 text-[hsl(var(--study))]">
               Best Free Study Material for CBSE & ICSE Board Exam Preparation
