@@ -204,7 +204,7 @@ const Index = () => {
         </section>
 
         {/* Subjects Grid */}
-        <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto" aria-label="Study materials by subject">
+        <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto" aria-label="Study materials by subject">
           {subjects.map((subject, index) => (
             <Card 
               key={subject.name} 
