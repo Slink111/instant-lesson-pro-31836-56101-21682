@@ -4,7 +4,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { GraduationCap, BookOpen, Beaker, Microscope, Monitor, LogOut, Home } from 'lucide-react';
+import { GraduationCap, BookOpen, Beaker, Microscope, LogOut, Home } from 'lucide-react';
 import SmartSearch from '@/components/SmartSearch';
 import {
   NavigationMenu,
@@ -19,7 +19,6 @@ const subjects = [
   { name: 'Physics', icon: Beaker, color: 'from-blue-500 to-indigo-600' },
   { name: 'Chemistry', icon: BookOpen, color: 'from-green-500 to-emerald-600' },
   { name: 'Biology', icon: Microscope, color: 'from-pink-500 to-rose-600' },
-  { name: 'Computer', icon: Monitor, color: 'from-purple-500 to-violet-600' },
 ];
 
 const classes = [7, 8, 9, 10];
@@ -176,33 +175,6 @@ const Index = () => {
               </NavigationMenuItem>
 
               <NavigationMenuItem>
-                <NavigationMenuTrigger>Computer Science</NavigationMenuTrigger>
-                <NavigationMenuContent>
-                  <ul className="grid gap-3 p-4 w-[200px]">
-                    {classes.map((classNum) => (
-                      <li key={`computer-${classNum}`}>
-                        <NavigationMenuLink asChild>
-                          <a
-                            href={`/browse/${selectedBoard}/Computer/${classNum}`}
-                            onClick={(e) => {
-                              e.preventDefault();
-                              handleSubjectClick('Computer', classNum);
-                            }}
-                            className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-                          >
-                            <div className="text-sm font-medium leading-none">Class {classNum}</div>
-                            <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                              Computer study materials
-                            </p>
-                          </a>
-                        </NavigationMenuLink>
-                      </li>
-                    ))}
-                  </ul>
-                </NavigationMenuContent>
-              </NavigationMenuItem>
-
-              <NavigationMenuItem>
                 <NavigationMenuLink 
                   href="#about"
                   className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-accent/50 data-[state=open]:bg-accent/50"
@@ -222,7 +194,7 @@ const Index = () => {
             Free CBSE & ICSE Study Material for Class 7-10 - <span className="text-primary">MCQs, Notes & Solutions</span>
           </h1>
           <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto px-4">
-            Access comprehensive CBSE and ICSE study materials, chapter-wise MCQs with answers, short and long questions, NCERT solutions, and revision notes for Physics, Chemistry, Biology, and Computer Science - Classes 7-10. Free PDF downloads for board exam preparation 2025.
+            Access comprehensive CBSE and ICSE study materials, chapter-wise MCQs with answers, short and long questions, NCERT solutions, and revision notes for Physics, Chemistry, and Biology - Classes 7-10. Free PDF downloads for board exam preparation 2025.
           </p>
           
           {/* Smart Search Bar */}
@@ -276,10 +248,10 @@ const Index = () => {
             <p className="text-base sm:text-lg text-center text-muted-foreground leading-relaxed mb-8">
               Topper Guide offers free CBSE and ICSE study materials for classes 7 to 10. Download chapter-wise MCQs with answers PDF, 
               NCERT solutions, short and long question answers, previous year question papers solved, important questions for board exams 2025, 
-              and comprehensive revision notes for Physics, Chemistry, Biology, and Computer Science. Our platform provides students with 
+              and comprehensive revision notes for Physics, Chemistry, and Biology. Our platform provides students with 
               quality educational resources including class 10 study material chapter wise free download, class 9 important questions with answers, 
               and class 8 board exam preparation materials. Master topics like light reflection and refraction MCQs, electricity numericals, 
-              periodic table questions, life processes notes, chemical reactions, heredity and evolution, python programming, and database concepts.
+              periodic table questions, life processes notes, chemical reactions, and heredity and evolution.
             </p>
             
             {/* Quotes Section */}

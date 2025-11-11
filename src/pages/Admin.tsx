@@ -373,7 +373,6 @@ const Admin = () => {
                         <SelectItem value="Physics">Physics</SelectItem>
                         <SelectItem value="Chemistry">Chemistry</SelectItem>
                         <SelectItem value="Biology">Biology</SelectItem>
-                        <SelectItem value="Computer">Computer</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>

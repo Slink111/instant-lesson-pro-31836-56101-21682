@@ -39,7 +39,6 @@ const SmartSearch = ({ defaultBoard }: SmartSearchProps) => {
     if (lower.includes('physics') || lower.includes('phy')) subject = 'Physics';
     else if (lower.includes('chemistry') || lower.includes('chem')) subject = 'Chemistry';
     else if (lower.includes('biology') || lower.includes('bio')) subject = 'Biology';
-    else if (lower.includes('computer') || lower.includes('comp') || lower.includes('cs')) subject = 'Computer';
 
     // Detect content type
     let contentType: string | undefined;
@@ -93,7 +92,7 @@ const SmartSearch = ({ defaultBoard }: SmartSearchProps) => {
       const newSuggestions: string[] = [];
       
       // Generate smart suggestions
-      const subjects = ['Physics', 'Chemistry', 'Biology', 'Computer'];
+      const subjects = ['Physics', 'Chemistry', 'Biology'];
       const classes = [7, 8, 9, 10, 11, 12];
       const contentTypes = ['MCQ', 'Long Answer', 'HOTS'];
       
