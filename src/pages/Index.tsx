@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -34,6 +35,27 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5">
+      <Helmet>
+        <title>Topper Guide | Free CBSE & ICSE Study Material for Class 7-10 - MCQs, Notes & Solutions</title>
+        <meta name="description" content="Access comprehensive CBSE and ICSE study materials, chapter-wise MCQs with answers, short and long questions, NCERT solutions, and revision notes for Physics, Chemistry, and Biology - Classes 7-10. Free PDF downloads for board exam preparation 2025." />
+        <meta name="keywords" content="CBSE study material, ICSE notes, class 7-10, MCQs with answers, NCERT solutions, Physics notes, Chemistry notes, Biology notes, board exam preparation, free PDF download" />
+        <link rel="canonical" href="https://topperguide.in/" />
+        <meta property="og:title" content="Topper Guide | Free CBSE & ICSE Study Material for Class 7-10" />
+        <meta property="og:description" content="Access comprehensive CBSE and ICSE study materials, chapter-wise MCQs with answers, NCERT solutions, and revision notes for Physics, Chemistry, and Biology." />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://topperguide.in/" />
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "EducationalOrganization",
+            "name": "Topper Guide",
+            "url": "https://topperguide.in/",
+            "description": "Free CBSE and ICSE study materials for classes 7-10",
+            "sameAs": "https://topperguide.in/"
+          })}
+        </script>
+      </Helmet>
+      
       {/* Header */}
       <header className="sticky top-0 z-50 backdrop-blur-lg bg-background/80 border-b">
         <div className="container mx-auto px-4 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
