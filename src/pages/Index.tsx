@@ -24,8 +24,12 @@ const subjects = [
 
 const classes = [7, 8, 9, 10];
 
-const Index = () => {
-  const [selectedBoard, setSelectedBoard] = useState<'CBSE' | 'ICSE'>('CBSE');
+interface IndexProps {
+  defaultBoard?: 'CBSE' | 'ICSE';
+}
+
+const Index = ({ defaultBoard = 'CBSE' }: IndexProps) => {
+  const [selectedBoard, setSelectedBoard] = useState<'CBSE' | 'ICSE'>(defaultBoard);
   const { nickname, isAdmin, clearNickname } = useAuth();
   const navigate = useNavigate();
 
@@ -36,22 +40,22 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5">
       <Helmet>
-        <title>Topper Guide | Free CBSE & ICSE Study Material for Class 7-10 - MCQs, Notes & Solutions</title>
-        <meta name="description" content="Access comprehensive CBSE and ICSE study materials, chapter-wise MCQs with answers, short and long questions, NCERT solutions, and revision notes for Physics, Chemistry, and Biology - Classes 7-10. Free PDF downloads for board exam preparation 2025." />
-        <meta name="keywords" content="CBSE study material, ICSE notes, class 7-10, MCQs with answers, NCERT solutions, Physics notes, Chemistry notes, Biology notes, board exam preparation, free PDF download" />
-        <link rel="canonical" href="https://topperguide.in/" />
-        <meta property="og:title" content="Topper Guide | Free CBSE & ICSE Study Material for Class 7-10" />
-        <meta property="og:description" content="Access comprehensive CBSE and ICSE study materials, chapter-wise MCQs with answers, NCERT solutions, and revision notes for Physics, Chemistry, and Biology." />
+        <title>{selectedBoard === 'CBSE' ? 'Topper Guide | Free CBSE Study Material for Class 7-10 - MCQs, Notes & Solutions' : 'Topper Guide | Free ICSE Study Material for Class 7-10 - MCQs, Notes & Solutions'}</title>
+        <meta name="description" content={`Access comprehensive ${selectedBoard} study materials, chapter-wise MCQs with answers, short and long questions, NCERT solutions, and revision notes for Physics, Chemistry, and Biology - Classes 7-10. Free PDF downloads for board exam preparation 2025.`} />
+        <meta name="keywords" content={`${selectedBoard} study material, ${selectedBoard} notes, class 7-10, MCQs with answers, NCERT solutions, Physics notes, Chemistry notes, Biology notes, board exam preparation, free PDF download`} />
+        <link rel="canonical" href={selectedBoard === 'CBSE' ? 'https://topperguide.in/maincbse' : 'https://topperguide.in/mainicse'} />
+        <meta property="og:title" content={`Topper Guide | Free ${selectedBoard} Study Material for Class 7-10`} />
+        <meta property="og:description" content={`Access comprehensive ${selectedBoard} study materials, chapter-wise MCQs with answers, NCERT solutions, and revision notes for Physics, Chemistry, and Biology.`} />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://topperguide.in/" />
+        <meta property="og:url" content={selectedBoard === 'CBSE' ? 'https://topperguide.in/maincbse' : 'https://topperguide.in/mainicse'} />
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
             "@type": "EducationalOrganization",
             "name": "Topper Guide",
-            "url": "https://topperguide.in/",
+            "url": "https://topperguide.in/maincbse",
             "description": "Free CBSE and ICSE study materials for classes 7-10",
-            "sameAs": "https://topperguide.in/"
+            "sameAs": "https://topperguide.in/maincbse"
           })}
         </script>
       </Helmet>
@@ -107,7 +111,7 @@ const Index = () => {
             <NavigationMenuList className="flex-wrap justify-center">
               <NavigationMenuItem>
                 <NavigationMenuLink 
-                  href="/"
+                  href="/maincbse"
                   className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-accent/50 data-[state=open]:bg-accent/50"
                 >
                   <Home className="w-4 h-4 mr-2" />
