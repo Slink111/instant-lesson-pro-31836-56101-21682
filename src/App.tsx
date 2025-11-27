@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
@@ -21,7 +21,9 @@ const App = () => (
       <BrowserRouter>
         <AuthProvider>
           <Routes>
-            <Route path="/" element={<Index />} />
+            <Route path="/" element={<Navigate to="/maincbse" replace />} />
+            <Route path="/maincbse" element={<Index defaultBoard="CBSE" />} />
+            <Route path="/mainicse" element={<Index defaultBoard="ICSE" />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/browse/:board/:subject/:classNum" element={<Browse />} />
             <Route path="/content/:chapterId" element={<Content />} />
