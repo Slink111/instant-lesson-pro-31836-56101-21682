@@ -21,8 +21,7 @@ const App = () => (
       <BrowserRouter>
         <AuthProvider>
           <Routes>
-            <Route path="/" element={<Navigate to="/maincbse" replace />} />
-            <Route path="/maincbse" element={<Index defaultBoard="CBSE" />} />
+            <Route path="/" element={<Index defaultBoard="CBSE" />} />
             <Route path="/mainicse" element={<Index defaultBoard="ICSE" />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/browse/:board/:subject/:classNum" element={<Browse />} />
