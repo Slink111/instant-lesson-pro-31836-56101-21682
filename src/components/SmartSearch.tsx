@@ -75,7 +75,7 @@ const SmartSearch = ({ defaultBoard }: SmartSearchProps) => {
     }
 
     const { board, subject, classNum, contentType } = parsed;
-    const url = `/browse/${board}/${subject}/${classNum}${contentType ? `?type=${contentType}` : ''}`;
+    const url = `/browse/${board.toLowerCase()}/${subject.toLowerCase()}/${classNum}${contentType ? `?type=${contentType}` : ''}`;
     navigate(url);
     setQuery('');
   };
@@ -119,7 +119,7 @@ const SmartSearch = ({ defaultBoard }: SmartSearchProps) => {
     const parsed = parseSearchQuery(suggestion);
     if (parsed && parsed.subject && parsed.classNum) {
       const { board, subject, classNum, contentType } = parsed;
-      const url = `/browse/${board}/${subject}/${classNum}${contentType ? `?type=${contentType}` : ''}`;
+      const url = `/browse/${board.toLowerCase()}/${subject.toLowerCase()}/${classNum}${contentType ? `?type=${contentType}` : ''}`;
       navigate(url);
       setQuery('');
     }

@@ -34,7 +34,7 @@ const Index = ({ defaultBoard = 'CBSE' }: IndexProps) => {
   const navigate = useNavigate();
 
   const handleSubjectClick = (subject: string, classNum: number) => {
-    navigate(`/browse/${selectedBoard}/${subject}/${classNum}`);
+    navigate(`/browse/${selectedBoard.toLowerCase()}/${subject.toLowerCase()}/${classNum}`);
   };
 
   return (
@@ -127,7 +127,7 @@ const Index = ({ defaultBoard = 'CBSE' }: IndexProps) => {
                       <li key={`physics-${classNum}`}>
                         <NavigationMenuLink asChild>
                           <a
-                            href={`/browse/${selectedBoard}/Physics/${classNum}`}
+                            href={`/browse/${selectedBoard.toLowerCase()}/physics/${classNum}`}
                             onClick={(e) => {
                               e.preventDefault();
                               handleSubjectClick('Physics', classNum);
@@ -154,7 +154,7 @@ const Index = ({ defaultBoard = 'CBSE' }: IndexProps) => {
                       <li key={`chemistry-${classNum}`}>
                         <NavigationMenuLink asChild>
                           <a
-                            href={`/browse/${selectedBoard}/Chemistry/${classNum}`}
+                            href={`/browse/${selectedBoard.toLowerCase()}/chemistry/${classNum}`}
                             onClick={(e) => {
                               e.preventDefault();
                               handleSubjectClick('Chemistry', classNum);
@@ -181,7 +181,7 @@ const Index = ({ defaultBoard = 'CBSE' }: IndexProps) => {
                       <li key={`biology-${classNum}`}>
                         <NavigationMenuLink asChild>
                           <a
-                            href={`/browse/${selectedBoard}/Biology/${classNum}`}
+                            href={`/browse/${selectedBoard.toLowerCase()}/biology/${classNum}`}
                             onClick={(e) => {
                               e.preventDefault();
                               handleSubjectClick('Biology', classNum);
