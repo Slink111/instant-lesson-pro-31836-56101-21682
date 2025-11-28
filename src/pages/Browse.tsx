@@ -29,13 +29,17 @@ const Browse = () => {
   }, [board, subject, classNum]);
 
 
+  // Convert lowercase URL params to proper case for database queries
+  const boardProper = board?.toUpperCase() || '';
+  const subjectProper = subject ? subject.charAt(0).toUpperCase() + subject.slice(1).toLowerCase() : '';
+
   const fetchChapters = async () => {
     setLoading(true);
     const { data, error } = await supabase
       .from('chapters')
       .select('*')
-      .eq('board', board)
-      .eq('subject', subject)
+      .eq('board', boardProper)
+      .eq('subject', subjectProper)
       .eq('class_number', Number(classNum))
       .order('created_at', { ascending: true });
 
@@ -56,9 +60,9 @@ const Browse = () => {
   return (
     <>
       <Helmet>
-        <title>{`${board} Class ${classNum} ${subject} Study Material - Chapter-wise Notes & MCQs | Topper Guide`}</title>
-        <meta name="description" content={`Free ${board} Class ${classNum} ${subject} study material with chapter-wise notes, MCQs with answers, short and long questions. Comprehensive ${subject} study notes for board exam preparation 2025.`} />
-        <meta name="keywords" content={`${board} class ${classNum} ${subject} study material, ${board} ${subject} class ${classNum} notes, ${subject} class ${classNum} mcqs with answers, ${subject} class ${classNum} important questions, ${board} class ${classNum} ${subject} chapter wise notes`} />
+        <title>{`${boardProper} Class ${classNum} ${subjectProper} Study Material - Chapter-wise Notes & MCQs | Topper Guide`}</title>
+        <meta name="description" content={`Free ${boardProper} Class ${classNum} ${subjectProper} study material with chapter-wise notes, MCQs with answers, short and long questions. Comprehensive ${subjectProper} study notes for board exam preparation 2025.`} />
+        <meta name="keywords" content={`${boardProper} class ${classNum} ${subjectProper} study material, ${boardProper} ${subjectProper} class ${classNum} notes, ${subjectProper} class ${classNum} mcqs with answers, ${subjectProper} class ${classNum} important questions, ${boardProper} class ${classNum} ${subjectProper} chapter wise notes`} />
         <link rel="canonical" href={`https://topperguide.in/browse/${board}/${subject}/${classNum}`} />
       </Helmet>
       <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 animate-fade-in">
@@ -74,10 +78,10 @@ const Browse = () => {
 
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-2">
-            <Badge variant="secondary">{board}</Badge>
+            <Badge variant="secondary">{boardProper}</Badge>
             <Badge variant="outline">Class {classNum}</Badge>
           </div>
-          <h1 className="text-4xl font-bold text-primary">{subject}</h1>
+          <h1 className="text-4xl font-bold text-primary">{subjectProper}</h1>
           <p className="text-muted-foreground mt-2">
             Select a chapter to access study materials
           </p>
