@@ -1,0 +1,6 @@
+# Netlify redirects for SPA routing
+# Serve static HTML SEO pages directly
+/index*.html    /index*.html    200
+
+# Handle all other routes through React Router
+/*    /index.html   200

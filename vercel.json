@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/((?!assets|.*\\.html$|.*\\.ico$|.*\\.svg$|.*\\.xml$|.*\\.txt$).*)",
+      "destination": "/index.html"
+    }
+  ]
+}
