@@ -8,6 +8,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { GraduationCap, BookOpen, Beaker, Microscope, LogOut, Home } from 'lucide-react';
 import SmartSearch from '@/components/SmartSearch';
 import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import {
   NavigationMenu,
   NavigationMenuContent,
   NavigationMenuItem,
@@ -24,6 +30,89 @@ const subjects = [
 
 const classes = [7, 8, 9, 10];
 
+const faqs = [
+  {
+    question: "What is Topper Guide and how can it help me prepare for board exams?",
+    answer: "Topper Guide is a free educational platform offering comprehensive CBSE and ICSE study materials for classes 7-10. We provide chapter-wise MCQs, NCERT solutions, short and long answer questions, revision notes, and previous year papers to help students excel in Physics, Chemistry, and Biology board exams."
+  },
+  {
+    question: "Are the study materials on Topper Guide free to download?",
+    answer: "Yes, all study materials on Topper Guide are completely free. You can access and download chapter-wise notes, MCQs with answers, NCERT solutions, and revision materials for CBSE and ICSE boards without any subscription or payment."
+  },
+  {
+    question: "Which subjects and classes are covered on Topper Guide?",
+    answer: "Topper Guide covers Physics, Chemistry, and Biology for classes 7, 8, 9, and 10. We provide study materials for both CBSE and ICSE boards, including chapter-wise content aligned with the latest syllabus."
+  },
+  {
+    question: "How are the MCQs helpful for board exam preparation?",
+    answer: "Our chapter-wise MCQs with answers help students practice objective-type questions that are commonly asked in board exams. Regular practice improves speed, accuracy, and conceptual understanding, making exam preparation more effective."
+  },
+  {
+    question: "Do you provide NCERT solutions for all chapters?",
+    answer: "Yes, we provide detailed NCERT solutions for Physics, Chemistry, and Biology for classes 7-10. Each solution is explained step-by-step to help students understand the concepts and methodology behind the answers."
+  },
+  {
+    question: "Can I download PDF files of study materials?",
+    answer: "Yes, Topper Guide allows you to download study materials including notes, MCQs, and solutions in PDF format. This makes it convenient to study offline and revise anytime, anywhere."
+  },
+  {
+    question: "How often is the content updated on Topper Guide?",
+    answer: "Our content is regularly updated to align with the latest CBSE and ICSE syllabus changes. We ensure that all study materials reflect the current academic year requirements and board exam patterns."
+  },
+  {
+    question: "What is the difference between CBSE and ICSE study materials?",
+    answer: "CBSE materials follow the NCERT curriculum with focus on conceptual understanding, while ICSE materials are more detailed and application-based. Topper Guide provides separate, board-specific content for both to ensure relevant preparation."
+  },
+  {
+    question: "How can I use the search feature effectively?",
+    answer: "Our smart search feature allows you to find specific topics, chapters, or question types quickly. Simply type keywords like 'photosynthesis MCQ' or 'electricity numericals' to get relevant study materials instantly."
+  },
+  {
+    question: "Are the revision notes suitable for last-minute exam preparation?",
+    answer: "Yes, our revision notes are concise and cover all important points, formulas, and concepts. They are perfect for quick revision before exams and help reinforce key topics efficiently."
+  },
+  {
+    question: "Do you provide previous year question papers with solutions?",
+    answer: "Yes, Topper Guide offers previous year question papers with detailed solutions for both CBSE and ICSE boards. Practicing these helps students understand the exam pattern and types of questions asked."
+  },
+  {
+    question: "How are the study materials organized on the website?",
+    answer: "Study materials are organized by board (CBSE/ICSE), subject (Physics/Chemistry/Biology), and class (7-10). Within each section, content is further divided chapter-wise for easy navigation and systematic study."
+  },
+  {
+    question: "Can Topper Guide help with class 10 board exam preparation?",
+    answer: "Absolutely! Our class 10 section includes comprehensive materials specifically designed for board exam preparation, including important questions, marking scheme insights, and chapter-wise weightage analysis."
+  },
+  {
+    question: "What topics are covered in Physics for class 10?",
+    answer: "Class 10 Physics covers Light - Reflection and Refraction, Human Eye, Electricity, Magnetic Effects of Electric Current, and Sources of Energy. We provide MCQs, numericals, and detailed notes for each chapter."
+  },
+  {
+    question: "What are the important chapters in Chemistry for board exams?",
+    answer: "Important Chemistry chapters include Chemical Reactions and Equations, Acids Bases and Salts, Metals and Non-metals, Carbon and its Compounds, and Periodic Classification of Elements. All chapters have comprehensive study materials."
+  },
+  {
+    question: "Which Biology chapters are most important for class 10?",
+    answer: "Key Biology chapters for class 10 include Life Processes, Control and Coordination, How do Organisms Reproduce, Heredity and Evolution, and Our Environment. We cover all these with detailed notes and questions."
+  },
+  {
+    question: "Is registration required to access study materials?",
+    answer: "No registration is required to browse and access most study materials. However, creating a free account with a nickname allows you to track your progress and access personalized features."
+  },
+  {
+    question: "How can I switch between CBSE and ICSE materials?",
+    answer: "You can easily switch between CBSE and ICSE study materials using the board selector dropdown in the header. The content will automatically update to show materials relevant to your selected board."
+  },
+  {
+    question: "Do you provide support for doubts and questions?",
+    answer: "While Topper Guide primarily focuses on self-study materials, our detailed explanations and step-by-step solutions are designed to clear doubts. Each topic includes comprehensive coverage to address common student questions."
+  },
+  {
+    question: "How can Topper Guide help me score better in exams?",
+    answer: "Topper Guide helps improve scores through systematic chapter-wise study, regular MCQ practice, understanding concepts via NCERT solutions, and effective revision using our concise notes. Consistent use of our materials builds strong fundamentals and exam confidence."
+  }
+];
+
 interface IndexProps {
   defaultBoard?: 'CBSE' | 'ICSE';
 }
@@ -35,6 +124,19 @@ const Index = ({ defaultBoard = 'CBSE' }: IndexProps) => {
 
   const handleSubjectClick = (subject: string, classNum: number) => {
     navigate(`/browse/${selectedBoard.toLowerCase()}/${subject.toLowerCase()}/${classNum}`);
+  };
+
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": faqs.map(faq => ({
+      "@type": "Question",
+      "name": faq.question,
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": faq.answer
+      }
+    }))
   };
 
   return (
@@ -57,6 +159,9 @@ const Index = ({ defaultBoard = 'CBSE' }: IndexProps) => {
             "description": "Free CBSE and ICSE study materials for classes 7-10",
             "sameAs": "https://topperguide.in"
           })}
+        </script>
+        <script type="application/ld+json">
+          {JSON.stringify(faqSchema)}
         </script>
       </Helmet>
       
@@ -315,6 +420,34 @@ const Index = ({ defaultBoard = 'CBSE' }: IndexProps) => {
                 </article>
               </div>
             </div>
+          </div>
+        </section>
+
+        {/* FAQ Section */}
+        <section className="mt-16 py-12 animate-fade-in" style={{ animationDelay: '500ms' }} aria-label="Frequently Asked Questions">
+          <div className="max-w-4xl mx-auto px-4">
+            <h2 className="text-3xl sm:text-4xl font-bold text-center mb-8 text-primary">
+              Frequently Asked Questions
+            </h2>
+            <p className="text-center text-muted-foreground mb-8">
+              Find answers to common questions about CBSE and ICSE study materials, board exam preparation, and using Topper Guide.
+            </p>
+            <Accordion type="single" collapsible className="w-full space-y-3">
+              {faqs.map((faq, index) => (
+                <AccordionItem 
+                  key={index} 
+                  value={`item-${index}`}
+                  className="bg-card border rounded-lg px-4 shadow-sm hover:shadow-md transition-shadow"
+                >
+                  <AccordionTrigger className="text-left text-base font-medium hover:no-underline">
+                    {faq.question}
+                  </AccordionTrigger>
+                  <AccordionContent className="text-muted-foreground leading-relaxed">
+                    {faq.answer}
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
           </div>
         </section>
 
