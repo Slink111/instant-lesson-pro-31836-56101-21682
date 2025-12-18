@@ -8,6 +8,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Helmet } from 'react-helmet-async';
 import katex from 'katex';
 import 'katex/dist/katex.min.css';
+import AdGate from '@/components/AdGate';
 
 interface Chapter {
   id: string;
@@ -31,6 +32,7 @@ const Content = () => {
   const [chapter, setChapter] = useState<Chapter | null>(null);
   const [studyMaterial, setStudyMaterial] = useState<StudyMaterial | null>(null);
   const [loading, setLoading] = useState(true);
+  const [showAdGate, setShowAdGate] = useState(true);
 
   useEffect(() => {
     fetchData();
@@ -81,6 +83,17 @@ const Content = () => {
       <div className="min-h-screen flex items-center justify-center">
         <p className="text-muted-foreground">Loading content...</p>
       </div>
+    );
+  }
+
+  if (showAdGate && studyMaterial) {
+    return (
+      <>
+        <Helmet>
+          <title>{chapter ? `${chapter.name} - ${chapter.board} Class ${chapter.class_number} ${chapter.subject} Study Material | Topper Guide` : 'Study Material | Topper Guide'}</title>
+        </Helmet>
+        <AdGate onContinue={() => setShowAdGate(false)} />
+      </>
     );
   }
 
