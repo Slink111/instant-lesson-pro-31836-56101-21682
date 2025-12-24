@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
@@ -452,10 +452,17 @@ const Index = ({ defaultBoard = 'CBSE' }: IndexProps) => {
         </section>
 
         {/* Footer */}
-        <footer className="mt-12 py-8 text-center border-t">
-          <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} Topper Guide. Empowering students to achieve excellence.
-          </p>
+        <footer className="mt-12 py-8 border-t">
+          <div className="container mx-auto px-4 text-center">
+            <div className="flex justify-center gap-4 mb-4 text-sm">
+              <Link to="/about" className="text-muted-foreground hover:text-primary transition-colors">About Us</Link>
+              <Link to="/privacy-policy" className="text-muted-foreground hover:text-primary transition-colors">Privacy Policy</Link>
+              <Link to="/terms" className="text-muted-foreground hover:text-primary transition-colors">Terms & Conditions</Link>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              © {new Date().getFullYear()} Topper Guide. Empowering students to achieve excellence.
+            </p>
+          </div>
         </footer>
       </main>
     </div>
