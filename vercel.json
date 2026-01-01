@@ -1,7 +1,11 @@
 {
   "rewrites": [
     {
-      "source": "/((?!assets|.*\\.html$|.*\\.ico$|.*\\.svg$|.*\\.xml$|.*\\.txt$).*)",
+      "source": "/browse/:board/:subject/:class",
+      "destination": "/browse/:board/:subject/:class.html"
+    },
+    {
+      "source": "/((?!assets|browse|.*\\.html$|.*\\.ico$|.*\\.svg$|.*\\.xml$|.*\\.txt$).*)",
       "destination": "/index.html"
     }
   ],
